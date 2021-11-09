@@ -1,0 +1,46 @@
+@use 'sass:math';
+
+$stepBubbleSize: 24px;
+
+.container {
+   margin: 0 16px;
+   flex-grow: 1;
+   max-width: 400px;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+}
+
+.stepContainer {
+   width: $stepBubbleSize;
+   height: $stepBubbleSize;
+   border-radius: math.div($stepBubbleSize, 2);
+   border: 1px solid rgba(0, 0, 0, 0.5);
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   &.completed {
+      background-color: #0f5ad9;
+   }
+
+   i {
+      color: white;
+      font-size: 14px;
+      margin-top: 4px;
+   }
+
+   .currentStepContainerDot {
+      width: math.div($stepBubbleSize, 2);
+      height: math.div($stepBubbleSize, 2);
+      background-color: #0f5ad9;
+      border-radius: $stepBubbleSize;
+   }
+}
+
+.stepLine {
+   flex-grow: 1;
+
+   height: 1px;
+
+   background-color: rgba(0, 0, 0, 0.5);
+}

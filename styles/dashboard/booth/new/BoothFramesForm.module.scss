@@ -1,0 +1,121 @@
+@import "../../../include";
+
+.container {
+   @extend .app_shadow;
+
+   width: 100%;
+   border-radius: 12px;
+   padding: 20px 24px;
+}
+
+.title {
+   font-size: 18px;
+   font-weight: 500;
+   display: block;
+   width: 100%;
+
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+
+   span {
+      display: inline-block;
+      margin-left: auto;
+      font-size: 14px;
+      font-weight: 400;
+   }
+}
+
+.previewsContainer {
+   display: flex;
+   flex-wrap: wrap;
+
+   & > * {
+      margin: 12px 8px;
+   }
+}
+
+.previewContainer {
+   height: 144px;
+   overflow: hidden;
+   border-radius: 10px;
+
+   position: relative;
+
+   cursor: pointer;
+
+   img {
+      height: 144px;
+      object-fit: contain;
+   }
+}
+
+.deleteImageHover {
+   position: absolute;
+   top: 0;
+   left: 0;
+   right: 0;
+   bottom: 0;
+
+   background-color: rgba(0, 0, 0, 0.75);
+   color: white;
+
+   display: flex;
+   align-items: center;
+   justify-content: center;
+
+   opacity: 0;
+
+   transition: opacity 0.2s;
+
+   i {
+      font-size: 40px;
+   }
+
+   &:hover {
+      opacity: 1;
+   }
+}
+
+.errorMessage {
+   font-size: 12px;
+   margin-top: 4px;
+   font-weight: 500;
+   color: $error_color;
+   margin-left: 8px;
+}
+.wrap{
+   display: flex;
+   flex-direction: column;
+   justify-content: space-evenly;
+   width: 100%;
+   height: auto;
+   border-radius: 12px;
+   margin-top: 10px;
+   padding: 32px;
+   box-shadow: 0 0 5px lightgray;
+
+}
+.refe{
+   display: flex;
+   align-items: center;
+   justify-content: space-evenly;
+   padding: 35px 0 0 0;
+}
+.link{
+   color: #0f5ad9;
+   font-size: 14px;
+   font-weight: 600;
+}
+.link:hover{
+   color: #f48733;
+}
+.pic{
+   height: 100px;
+   width: auto;
+   padding: 5px;
+   cursor: pointer;
+}
+.pic:hover{
+   outline: 3px solid #0f5ad9;
+} 

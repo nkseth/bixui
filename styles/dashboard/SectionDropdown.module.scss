@@ -1,0 +1,39 @@
+@import "../include";
+
+.container {
+   //    @extend .app_shadow;
+
+   width: 100%;
+
+   border: 1px solid rgba(0, 0, 0, 0.25);
+
+   border-radius: 6px;
+
+   margin: 16px 0;
+
+   &:first-of-type {
+      margin-top: 0;
+   }
+
+   &:last-of-type {
+      margin-bottom: 0;
+   }
+}
+
+.titleContainer {
+   padding: 24px 32px;
+
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+
+   cursor: pointer;
+
+   p {
+      text-transform: uppercase;
+   }
+}
+
+.contentContainer {
+   padding: 24px 32px;
+}

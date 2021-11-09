@@ -1,0 +1,50 @@
+.button {
+   height: 40px;
+
+   border: none;
+   outline: none;
+   border-radius: 10px;
+
+   background-color: #0f5ad9;
+   color: #fff;
+
+   padding: 0 20px;
+
+   cursor: pointer;
+
+   font-size: 15px;
+   font-weight: 500;
+
+   transition: 0.3s;
+
+   &:not(:disabled):hover {
+      background-color: #0742a8;
+   }
+
+   &:disabled {
+      filter: grayscale(1);
+      cursor: not-allowed;
+   }
+
+   &.rounded {
+      width: 40px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 100px;
+
+      i {
+         margin: 0;
+      }
+   }
+
+   i {
+      margin-right: 10px;
+
+      &.rightIcon {
+         margin-left: 10px;
+         margin-right: 0;
+      }
+   }
+}

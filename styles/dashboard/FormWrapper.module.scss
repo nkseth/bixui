@@ -1,0 +1,35 @@
+@import "../include";
+
+.container {
+   @extend .app_shadow;
+
+   width: 100%;
+   border-radius: 12px;
+   padding: 32px;
+}
+
+.splitter {
+   width: 100%;
+   height: 1px;
+   background-color: #8c8c8c;
+   margin: 16px 0;
+}
+
+.title {
+   font-size: 18px;
+   font-weight: 500;
+   display: block;
+   width: 100%;
+
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   margin-bottom: 16px;
+
+   span {
+      display: inline-block;
+      margin-left: auto;
+      font-size: 14px;
+      font-weight: 400;
+   }
+}

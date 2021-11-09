@@ -1,0 +1,35 @@
+.container {
+   width: 100%;
+   //    height: 64px;
+
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+
+   padding: 32px 0;
+
+   margin-bottom: 16px;
+}
+
+.userInfo {
+   font-weight: 500;
+
+   i {
+      margin-left: 12px;
+      cursor: pointer;
+   }
+}
+
+.breadcrumbsContainer {
+   display: flex;
+   align-items: center;
+}
+
+.breadcrumbsItem {
+   font-weight: 500;
+   font-size: 16;
+   cursor: pointer;
+   i {
+      margin: 0 12px;
+   }
+}

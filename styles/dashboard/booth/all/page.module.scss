@@ -1,0 +1,102 @@
+.activitiesContainer {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.activityContainer {
+  flex-grow: 1;
+  padding: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+
+  &:not(:last-of-type) {
+    border-right: 1px solid #8c8c8c;
+  }
+
+  i {
+    color: #0f5ad9;
+    font-size: 48px;
+
+    margin-right: 16px;
+  }
+
+  h4 {
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+
+  h5 {
+    font-weight: 400;
+    text-transform: capitalize;
+    font-size: 15px;
+  }
+}
+
+.tableContainer {
+  table {
+    border-collapse: collapse;
+  }
+
+  td,
+  th {
+    text-align: left;
+    padding: 8px;
+    font-size: 15px;
+  }
+
+  .fitContent {
+    white-space: nowrap;
+    width: 1%;
+  }
+
+  .actionsContainer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    padding-left: 24px;
+
+    button {
+      border: none;
+      outline: none;
+      background: transparent;
+      cursor: pointer;
+      padding: 4px;
+
+      margin: 0 8px;
+
+      &:first-of-type {
+        margin-left: 0;
+      }
+      &:last-of-type {
+        margin-right: 0;
+      }
+
+      i {
+        font-size: 18px;
+      }
+    }
+  }
+}
+
+.logo_footer {
+  width: 100px;
+  height: auto;
+}
+.footer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.disabled {
+  pointer-events: none;
+  cursor: default;
+  color: grey;
+}

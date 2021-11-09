@@ -1,0 +1,83 @@
+@import "../../../include";
+
+.container {
+   @extend .app_shadow;
+
+   width: 100%;
+   border-radius: 12px;
+   padding: 32px;
+}
+
+.title {
+   font-size: 18px;
+   font-weight: 500;
+}
+
+.splitter {
+   width: 100%;
+   height: 1px;
+   background-color: #8c8c8c;
+
+   margin: 16px 0;
+}
+
+.formContainer {
+   padding: 12px 24px;
+}
+
+.inputContainer {
+   width: 100%;
+
+   margin: 8px 0;
+
+   &:first-of-type {
+      margin-top: 0;
+   }
+
+   &:last-of-type {
+      margin-bottom: 0;
+   }
+
+   &.smaller {
+      width: 50%;
+   }
+
+   label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+   }
+
+   input {
+      background-color: transparent;
+   }
+}
+
+.inputsGroup {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+
+   & > .inputContainer {
+      margin: 8px 12px;
+
+      &:first-of-type {
+         margin-left: 0;
+      }
+
+      &:last-of-type {
+         margin-right: 0;
+      }
+   }
+}
+
+.message,
+.errorMessage {
+   font-size: 12px;
+   margin-top: 4px;
+   font-weight: 500;
+}
+
+.errorMessage {
+   color: $error_color;
+}

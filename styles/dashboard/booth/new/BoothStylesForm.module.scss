@@ -1,0 +1,45 @@
+@import "../../../include";
+
+.colorInputContainer {
+   margin: 12px 0;
+
+   label {
+      margin-left: 8px;
+   }
+}
+
+.title {
+   margin: 8px 0;
+   margin-top: 24px;
+}
+
+.imgPreview {
+   display: block;
+   width: auto;
+   max-width: 480px;
+   max-height: 300px;
+   margin: 0 auto;
+   margin-bottom: 8px;
+}
+
+.errorMessage {
+   font-size: 12px;
+   margin-top: 4px;
+   font-weight: 500;
+   color: $error_color;
+}
+.delete{
+   width: 50px;
+   height: 50px;
+   border-radius: 5px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   padding: 15px;
+   background: #0f5ad9;
+   color: white;
+   font-size: 26px;
+   margin: 10px 0;
+   float: right;
+   cursor: pointer;
+}

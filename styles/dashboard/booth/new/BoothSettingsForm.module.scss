@@ -1,0 +1,23 @@
+.checkBoxContainer {
+   display: flex;
+   align-items: center;
+
+   input {
+      margin-right: 16px;
+      cursor: pointer;
+   }
+
+   label {
+      text-transform: capitalize;
+      user-select: none;
+      cursor: pointer;
+   }
+}
+
+.checkBoxesContainer {
+   display: grid;
+   grid-template-columns: repeat(3, 1fr);
+   //    grid-template-rows: repeat(3, 1fr);
+   grid-column-gap: 0px;
+   grid-row-gap: 8px;
+}
