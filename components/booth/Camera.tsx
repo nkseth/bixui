@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-key */
 /* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useRef, useState } from "react";
 import { Draggable, Droppable } from "react-drag-and-drop";
@@ -14,7 +15,11 @@ import { useRouter } from "next/router";
 import Swal from "sweetalert2";
 import { useStoreState } from "../../hooks/store";
 import { getMergedImages } from "../../constants/helpers";
-
+import moment from "moment";
+import { FabricJSCanvas, useFabricJSEditor } from 'fabricjs-react'
+import { fabric } from 'fabric'
+import FabricToImageData from 'fabric-to-image-data'
+import ReactDOM from "react-dom"
 type CameraPorps = {
   selectedCameraType: "still" | "burst" | "gif";
   selectedFrameIndex: number;
@@ -46,47 +51,20 @@ const Camera: React.FC<CameraPorps> = ({
     height: 0,
   });
   const frameImage: any = useRef();
+  
   const frameImageWidth = frameImage?.current?.clientWidth || 0;
+
   const cameraContainerRef: any = useRef();
   const frameOffset = cameraContainerRef?.current?.getBoundingClientRect();
   const frameWidth = cameraContainerRef?.current?.offsetWidth;
   const frameHeight = cameraContainerRef?.current?.offsetHeight;
   const stickersRef: any = useRef(Array.from({length: stickers.length}, a => React.createRef()));
+  const { editor, onReady } = useFabricJSEditor()
+  
 
-  const handleDrag = (e: any, index: number) => {
-    const imageOffset = stickersRef?.current?.[index]?.getBoundingClientRect();
-    const start = { x: imageOffset?.width || 90, y: imageOffset?.height || 20 };
-    const position = {
-      x: e.x - start.x - offset.left || 0,
-      y: e.y - start.y - offset.top || 0,
-    };
-    setStickers((s) =>
-      s.map((item, key) => {
-        if (index === key) {
-          return { ...item, x: position.x || 0, y: position.y || 0 };
-        }
-        return item;
-      })
-    );
-  };
 
-  const isDragDisabled = (index:any) => false;
 
-  useEffect(() => {
-    if (
-      offset.top !== frameOffset?.top ||
-      offset.left !== frameOffset?.left ||
-      offset.width !== frameWidth ||
-      height !== frameHeight
-    ) {
-      setOffset({
-        top: frameOffset?.top || 0,
-        left: frameOffset?.left || 0,
-        width: frameWidth || 0,
-        height: frameHeight || 0,
-      });
-    }
-  }, [ offset.top, offset.left, offset.width, frameOffset, frameWidth, frameHeight]);
+ 
 
   const isBurst = selectedCameraType === "burst";
   const isStill = selectedCameraType === "still";
@@ -106,14 +84,17 @@ const Camera: React.FC<CameraPorps> = ({
   const [isUploading, setIsUploading] = React.useState(false);
   const [uploadProgress, setUploadProgress] = React.useState(0);
 
+  const [addtext,setaddtext]=useState(false);
+
   const router = useRouter();
-  const user = useStoreState((s) => s.user);
+  const user = useStoreState((s) => {console.log("adfasdfsadsadsds",s); return s.user });
 
   const webcamRef = React.useRef<Webcam | null>(null);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   React.useEffect(
     React.useCallback(() => {
+    
       if (!capturedImages?.length) return;
 
       const nextFrameIndex = (old: number) => {
@@ -233,7 +214,7 @@ const Camera: React.FC<CameraPorps> = ({
       images,
       width,
       height,
-      !user?.isOwner
+      user?.isOwner
     );
 
     if (isStill) {
@@ -259,15 +240,76 @@ const Camera: React.FC<CameraPorps> = ({
     // setUploadProgress(0);
   };
 
+
+  
+  const saveImage2 = async (img) => {
+    const formdata = new FormData();
+
+    formdata.append("isBurst", isBurst ? "true" : "false");
+
+    const result = await Swal.fire({
+      icon: "question",
+      title: "Can we have your stunning photo in our Gallery ?",
+      showConfirmButton: true,
+      showDenyButton: true,
+      confirmButtonText: "Yes, Please!",
+      denyButtonText: "No, I'm too shy",
+    });
+
+    formdata.append("isPublic", result.isConfirmed ? "true" : "false");
+    formdata.append(
+      "aspectRatio",
+      frames[selectedFrameIndex].aspectRatio.toString()
+    );
+
+    setIsUploading(true);
+    const imag=[]
+    imag.push(img)
+    const newImages = await handleMergeImages(
+      imag,
+      width,
+      height,
+      user?.isOwner
+    );
+debugger
+    if (isStill) {
+      formdata.append("image", newImages[0]);
+    } else {
+      newImages.forEach((image) => {
+        formdata.append("images[]", image);
+      });
+    }
+
+    const { data } = await api.post(
+      `/booth/${booth.slug}/${isStill ? "saveImage" : "saveGIF"}`,
+      formdata,
+      {
+        onUploadProgress: (e) =>
+          setUploadProgress(Math.round((e.loaded * 100) / e.total)),
+      }
+    );
+
+    router.push("/booth/" + booth.slug + "/gallery/" + data.filename);
+
+    // setIsUploading(false);
+    // setUploadProgress(0);
+  };
+
+React.useEffect(()=>{
+  console.log(window.location.href)
+  },[user])
+
   const handleMergeImages = async (
     images: string[],
     width: number,
     height: number,
-    useWatermark?: boolean
+    isowner?: boolean
   ) => {
+
     const watermarkWidth = 200;
     const watermarkHeight = 132;
-    if (useWatermark) {
+    console.log(moment(booth.starts_at).diff(moment(),'seconds')<0)
+    if ( isowner?moment(booth.starts_at).diff(moment(),'seconds')<0:true ) {
       const constructImages = images.map((image) => [
         ...[
           { src: image, x: 0, y: 0 },
@@ -296,10 +338,112 @@ const Camera: React.FC<CameraPorps> = ({
     let box = document.querySelector("#stickerbox")!;
     box.classList.toggle("showbox");
   };
-const addImage = () => {
+
+
+
+const [imagew,setimgw]=useState()
+
+useEffect(() => {
+
+
+  fabric.Image.fromURL(capturedImages[capturedImagePreviewIndex()], function(oImg) { 
+     console.log("wogoo",oImg)
+    editor?.canvas.add( oImg.set({selectable:false,crossOrigin:"anonymous"}) );
+   editor?.canvas.renderAll()
   
+  
+  },{ crossOrigin: 'Anonymous' })
+
+
+   fabric.Image.fromURL(IMAGES_URI + frames[selectedFrameIndex].filename, function(oImg) {  
+
+      if(imagew?.clientWidth<250){
+        editor?.canvas.add( oImg.set({left: 0, top: 0,selectable:false,crossOrigin:"anonymous"}).scale(0.25));
+      }
+      else{
+        editor?.canvas.add( oImg.set({left: 0, top: 0,selectable:false,crossOrigin:"anonymous"}).scale(0.37));  
+      }
+      
+      editor?.canvas.renderAll()
+  },{ crossOrigin: 'Anonymous' })
+  
+
+},[ capturedImages])
+
+const savecanvas=()=>{
+
+  console.log("this is blob",editor?.canvas)
+   // console.log(blob);
+     console.log(editor?.canvas.toDataURL({format: 'png'}))
+    // console.log(URL.createObjectURL(blob))
+    if ( true )
+    {
+      fabric.Image.fromURL(IMAGES_URI + frames[selectedFrameIndex].filename, function(oImg) {  
+
+        
+          editor?.canvas.add( oImg.set({left:0, top: -100,selectable:false,width:'200',height:"132"}));
+  
+        
+        editor?.canvas.renderAll()
+    },{ crossOrigin: 'Anonymous' })
+    }
+
+
+    const url = editor?.canvas.toDataURL({format: 'png'})
+    fetch(url)
+      .then(res => res.blob())
+      .then(blob => {
+        const file = new File([blob], "File name",{ type: "image/png" })
+        console.log(file)
+        saveImage2(url)
+      })
+
+  
+    }
+
+
+
+
+
+const addsticker=(imgurl) => {
+  
+ 
+    fabric.Image.fromURL(imgurl, function(oImg) { 
+      // oImg._originalElement.crossOrigin="anonymous"
+      editor?.canvas.add( oImg.set({left: 0, top: 0,zIndex:'2000'}).scale(0.7));
+      
+  },{ crossOrigin: 'Anonymous' })
+
+
 }
 
+const atttextcanvas=()=>{
+  editor?.canvas.add(new fabric.Text(textvalue, { 
+    left: 10, //Take the block's position
+    top: 10, 
+    fill:textcolor
+    
+}));
+}
+
+const funi=()=>{
+  var img = document.createElement('img');
+ 
+  fabric.Object.prototype.transparentCorners = false;
+  fabric.Object.prototype.cornerColor = 'blue';
+  fabric.Object.prototype.cornerStyle = 'circle';
+  var img = document.getElementById('imageid');
+  setimgw(img) 
+
+//or however you get a handle to the IMG
+        var width = img?.clientWidth;
+        var height = img?.clientHeight;
+      alert(width + ' x ' + height + '')
+        editor?.canvas.setDimensions({width:width, height:height});
+}
+
+const [textcolor,settextcolor]=useState("#000ff")
+const [textvalue,settextvalue]=useState("")
   return (
     <div
       className="cameraContainer"
@@ -325,6 +469,7 @@ const addImage = () => {
                 ...(uploadProgress && {
                   display: "none",
                 }),
+               
               }}
             >
               <Webcam
@@ -343,46 +488,46 @@ const addImage = () => {
                 onPlay={() => setCameraIsLoaded(true)}
                   //onUserMedia={handleMediaStream}
               />
-              {capturedImages.length ? (
-                <img
+
+<div 
+
+ style={{ ...((!cameraIsLoaded || capturedImages.length) && { zIndex: 1000 }),width:imagew?.clientWidth,
+height:imagew?.clientHeight
+}}
+ 
+ >
+  <FabricJSCanvas className="sample-canvas" onReady={onReady} />
+</div>
+              
+              
+                             {capturedImages.length ? (
+             
+               <img
                   src={capturedImages[capturedImagePreviewIndex()]}
                   alt="Frame"
                   className="videoPreview"
-                />
-              ) : null}
-              <Droppable
-                onDrop={(e: { sticker: string }) =>
-                  setStickers((s) => [
-                    ...s,
-                    { src: e?.sticker || "", x: 0, y: 0 },
-                  ])
-                }
-                types={["sticker"]}
-                id="dBox"
-              >
-                <img
-                  style={{ ...(!cameraIsLoaded && { display: "none" }) }}
+                style={{ ...((!cameraIsLoaded || capturedImages.length) && { zIndex: -1000 }) }}
+                /> 
+             ) : null}
+             <img id="imageid"
+                  style={{ ...((!cameraIsLoaded || capturedImages.length) && { zIndex: -1000 }) }}
                   src={IMAGES_URI + frames[selectedFrameIndex].filename}
                   alt="Frame"
                   className="videoPreview frame"
                   ref={frameImage}
-                />
+                /> 
                 <div className="sticker_container" id="sticker_container">
-                  {stickers.map((item, index) => (
-                    <ReactDraggable
-                      key={index}
-                      defaultPosition={{ x: 0, y: 0 }}
-                      onDrag={(e) => handleDrag(e, index)}
-                      disabled={isDragDisabled(index)}
-                    >
+                  {stickers.map((item, index) => 
+                    
                       <img src={item.src} alt={item.src} ref={stickersRef?.current?.[index]} />
-                    </ReactDraggable>
-                  ))}
+                   
+                  )}
                 </div>
-              </Droppable>
+             
             </div>
           </div>
-          <div className="buttonsContainer">
+          <div style={{display:'flex',justifyContent: 'center',flexDirection:'column'}}>
+          <div className="buttonsContainer" >
             <Button
               icon={
                 "fas fa-" + (capturedImages.length ? "redo" : "chevron-left")
@@ -392,18 +537,30 @@ const addImage = () => {
               iconSize={18}
               onClick={
                 capturedImages.length
-                  ? () => setCapturedImages([])
-                  : () => setCurrentStepIndex((s) => s - 1)
+                  ? () =>{ setCapturedImages([])
+                    let obi=editor?.canvas.getObjects()
+                    obi.map((item)=>{
+                      debugger
+                      editor?.canvas.remove(item)
+                    })
+                    editor?.canvas.clear()
+                  }
+                  : () => {setCurrentStepIndex((s) => s - 1);
+                    }
               }
               title={capturedImages.length ? "Retake" : "Go back"}
             />
-            <Button iconSize={18} icon="fas fa-font" isRounded />
+            <Button iconSize={18}  onClick={()=>{setaddtext(true)}} icon="fas fa-font" isRounded 
+             disabled={
+              !capturedImages.length
+            }
+            />
             <Button
               icon={`fas fa-${isCapturing ? "spinner fa-pulse" : "camera-alt"}`}
               isRounded
               size={70}
               iconSize={28}
-              onClick={handleCapture}
+              onClick={()=>{handleCapture();funi()}}
               disabled={
                 !!capturedImages.length || isCapturing || !cameraIsLoaded
               }
@@ -414,6 +571,9 @@ const addImage = () => {
               isRounded
               icon="far fa-laugh-beam"
               onClick={() => stickerBox()}
+              disabled={
+                !capturedImages.length
+              }
             />
             <Button
               icon={
@@ -424,18 +584,48 @@ const addImage = () => {
               size={50}
               iconSize={18}
               title={capturedImages.length ? "Go next" : "Flip camera"}
-              onClick={capturedImages.length ? saveImage : undefined}
+              onClick={capturedImages.length ? savecanvas : undefined}
             />
             <div className="sticker" id="stickerbox">
               {sticker.map((item, index) => (
-                <Draggable  data={item} type="sticker" key={index}>
-                  <img  onClick={()=>addImage()}src={item} alt={item} />
-                </Draggable>
+           
+                  <img  key={index} onClick={()=>addsticker(item)}src={item} alt={item} />
+              
               ))}
             </div>
+         
+
+           
+          </div>
+        
+          <div>
+              <button onClick={()=>{
+                   var object = editor?.canvas.getActiveObject();
+                   console.log(object)
+                   if (!object){
+                       alert('Please select the element to remove');
+                       return '';
+                   }
+                   editor?.canvas.remove(object);
+
+              }}>Remove selected image Image</button>
+            </div>
+            
+            {addtext?<div style={{display:'flex'}}>
+              <input onChange={(e)=>{settextvalue(e.target.value)}} value={textvalue}>
+            </input>
+            <label >Color Picker:</label>
+            <input type="color" id="colorpicker" value={textcolor} onChange={(e)=>{settextcolor(e.target.value)}}/>
+            <button onClick={()=>{atttextcanvas()}}>Add text</button>
+            </div>:null}
+           
+            
           </div>
         </>
+
+        
       )}
+     
     </div>
   );
 };

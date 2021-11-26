@@ -62,6 +62,7 @@ const Gallery: React.FC<GalleryPorps> = ({}) => {
 
   // @todo - download All images
   const handleDownloadAll = () => {
+    
     images.forEach((image) => {
     let link = document.createElement("a");
     link.href = `${IMAGES_URI}${image.filename}/download`;  //the api for download All '/images/downloadAll/1' 
@@ -136,6 +137,7 @@ const Gallery: React.FC<GalleryPorps> = ({}) => {
                   Download Selected
                 </button>
                 <div className={styles.galleryImages}>
+                  {console.log(images)}
                   {images.map((image, key) => (
                     <GalleryImage
                       key={key}

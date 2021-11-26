@@ -8,17 +8,18 @@ import { BoothFormValues } from "../../../../pages/dashboard/booth/new";
 import styles from "../../../../styles/dashboard/booth/new/BoothFramesForm.module.scss";
 import FileDropArea from "../../../FileDropArea";
 import FormWrapper from "../../FormWrapper";
-
+import { useStoreState } from "../../../../hooks/store";
 type BoothFramesFormPorps = {};
 
 const BoothFramesForm: React.FC<BoothFramesFormPorps> = ({}) => {
   const MAX_IMAGES = 5;
-
+  const [newselectedimage,setnewselected]=useState([])
   const formik: FormikContextType<BoothFormValues> = useFormikContext();
-  const [selectedImages, setSelectedImages] = useState<string[]>([]);
-  const [images, setImages] = useState<any[]>(formik.values.images.frames);
 
+  const [images, setImages] =useState<any[]>(formik.values.images.frames);
+console.log(formik.values.images.frames)
   const canUploadMore = images.length < MAX_IMAGES;
+ // const user = useStoreState((s) => {console.log("adfasdfsadsadsds",s); return s.user });
 
   const handleFilesList = (files: FileList) => {
     for (let i = 0; i < files.length; i++) addImage(files.item(i) as File);
@@ -29,6 +30,13 @@ const BoothFramesForm: React.FC<BoothFramesFormPorps> = ({}) => {
       setImages((images) => [...images, file]);
     }
   };
+//const [newset,setnewset]=useState([])
+
+  useEffect(()=>{
+    formik.setFieldValue("images.frames",images );
+  },[images])
+
+ 
 
   const handleImageDelete = (image: File | Frame) => {
     swal
@@ -41,14 +49,63 @@ const BoothFramesForm: React.FC<BoothFramesFormPorps> = ({}) => {
         showDenyButton: true,
       })
       .then(() => {
-        setImages((i) => i.filter((f) => f !== image));
+        debugger
+        const heep=[]
+        images.map((item)=>{
+          if(item?.name!==image?.name || image?.filename!==item?.filename)  heep.push(item)
+        })
+        formik.setFieldValue("images.frames",heep );
+        setImages(heep);
       });
   };
 
-  useEffect(() => {
-    formik.setFieldValue("images.frames", images);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [images]);
+//   const imageconvertor=async(url:any,name:any)=>{
+ 
+//     const toDataURL = async(url:any) => await fetch(url)
+//           .then(response => response.blob())
+//           .then(blob => new Promise((resolve, reject) => {
+//           const reader = new FileReader()
+//           reader.onloadend = () => resolve(reader.result)
+//           reader.onerror = reject
+//           reader.readAsDataURL(blob)
+//          }))
+    
+//          function dataURLtoFile(dataurl:any, filename:any) {
+         
+//           var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+//           bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+//           while(n--){
+//           u8arr[n] = bstr.charCodeAt(n);
+//           }
+//         return new File([u8arr], filename, {type:mime});
+//        }
+//  const data= await toDataURL(url) 
+
+// return dataURLtoFile(data,name)
+
+//   }
+
+ 
+//   useEffect(() => {
+//     const img=[]
+//     Promise.all(images?.map(async (item)=>{
+
+//         const imageobb=  await imageconvertor(`${IMAGES_URI+item.filename}`,item.filename)
+
+//         img.push(imageobb)
+    
+//      return img
+     
+//     })).then((result)=>{
+//       setnewset(result)
+//       console.log("this is result",result)
+//     })
+// // if(images.length>0) formik.setFieldValue("images.frames", img);
+    
+//     // eslint-disable-next-line react-hooks/exhaustive-deps
+//   }, [images]);
+
+
 
   const allFrames = [
     "/frame1.png",
@@ -58,23 +115,37 @@ const BoothFramesForm: React.FC<BoothFramesFormPorps> = ({}) => {
     "/frame5.png",
   ].map((item) => APP_URI + item);
 
-  const handleSelectedImageDelete = (image: string, index: number) => {
-    swal
-      .fire({
-        title: "Delete frame ?",
-        icon: "warning",
-        confirmButtonText: "Delete",
-        denyButtonText: "Cancel",
-        showConfirmButton: true,
-        showDenyButton: true,
-      })
-      .then(() => {
-        setSelectedImages((prev) =>
-          prev.filter((item, key) => key !== index && item !== image)
-        );
-      });
-  };
+;
 
+
+
+  const selectedimageclick=async(url:any,name:any)=>{
+ 
+    const toDataURL = async(url:any) => await fetch(url)
+          .then(response => response.blob())
+          .then(blob => new Promise((resolve, reject) => {
+          const reader = new FileReader()
+          reader.onloadend = () => resolve(reader.result)
+          reader.onerror = reject
+          reader.readAsDataURL(blob)
+         }))
+    
+         function dataURLtoFile(dataurl:any, filename:any) {
+         
+          var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+          bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+          while(n--){
+          u8arr[n] = bstr.charCodeAt(n);
+          }
+        return new File([u8arr], filename, {type:mime});
+       }
+ const data= await toDataURL(url) 
+
+ addImage(dataURLtoFile(data,name))
+
+  }
+
+ 
   return (
     <>
       <FormWrapper
@@ -94,32 +165,21 @@ const BoothFramesForm: React.FC<BoothFramesFormPorps> = ({}) => {
           </small>
         </p>
         <div className={styles.previewsContainer}>
-          {selectedImages.map((image, i) => (
-            <div
-              key={`${image}-${i}`}
-              className={styles.previewContainer}
-              onClick={() => handleSelectedImageDelete(image, i)}
-            >
-              <img alt={image} src={image} />
-              <div className={styles.deleteImageHover}>
-                <i className="fas fa-trash-alt" />
-              </div>
-            </div>
-          ))}
+          
           {images.map((image, i) => (
             <div
               key={
-                (image?.filename ? image.filename : image.lastModified) + "" + i
+                (image?.filename ? image?.filename : image?.lastModified) + "" + i
               }
               className={styles.previewContainer}
               onClick={() => handleImageDelete(image)}
             >
               <img
-                alt={image.filename ? image.filename : image.name}
+                alt={image?.filename ? image?.filename : image?.name}
                 src={
-                  image.filename
-                    ? IMAGES_URI + image.filename
-                    : URL.createObjectURL(image)
+                  image?.filename
+                    ? IMAGES_URI + image?.filename
+                    : URL?.createObjectURL(image)
                 }
               />
               <div className={styles.deleteImageHover}>
@@ -152,7 +212,7 @@ const BoothFramesForm: React.FC<BoothFramesFormPorps> = ({}) => {
               className={styles.pic}
               src={item}
               alt={`Reference frame ${index}`}
-              onClick={() => setSelectedImages((prev) => [...prev, item])}
+              onClick={() => {selectedimageclick(item,`Reference frame ${index}`)}}
             />
           ))}
         </div>

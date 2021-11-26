@@ -1,4 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap");
+:root {
+  cheight: 400px;
+  cwidth:400px
+}
 
 .boothContainer {
   width: 100%;
@@ -112,6 +116,9 @@
     align-items: center;
     justify-content: space-evenly;
     margin-top: 1rem;
+    width: 100%;
+    min-width: 350px;
+   
     button:not(:first-of-type) {
       margin-left: 1rem;
     }
@@ -239,7 +246,7 @@
   }
 
   .cameraContainer {
-    width: 95%;
+   
     margin: 0 auto;
     //height: 65vh;
     height: 480px;
@@ -282,9 +289,10 @@
 
   .galleryPreviewContainer {
     .previewImage {
-      max-width: 600px;
-      width: 95%;
-      max-height: 60vh;
+      max-width: px;
+     
+      height: 480px;
+      
       display: block;
       margin: 0 auto;
     }
@@ -410,4 +418,11 @@
 }
 #stickerbox.showbox{
    visibility: visible;
+}
+
+.sample-canvas{
+height: inherit;
+width:inherit ;
+  
+ 
 }

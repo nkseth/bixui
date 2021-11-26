@@ -235,7 +235,7 @@ const NewBooth: React.FC<NewBoothPorps> = ({}) => {
     });
 
     setIsSubmitting(true);
-
+console.log(form)
     api
       .post("/booth/create", form, {
         onUploadProgress: (e) => setUploadProgress(e.loaded / e.total),

@@ -19,7 +19,7 @@ import BoothPhrasesForm from "../../../../components/dashboard/booth/edit/BoothP
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { Booth, Frame } from "../../../../constants/types";
 import styles from "../../../../styles/dashboard/booth/all/page.module.scss";
-
+import { APP_URI, IMAGES_URI } from "../../../../constants/variables";
 type NewBoothPorps = {};
 
 export type BoothFormValues = {
@@ -106,9 +106,6 @@ const EditBooth = (
    const framesFormValidationSchema = Yup.object().shape({
       images: Yup.object().shape({
          frames: Yup.array()
-            .ensure()
-            .compact()
-            .of(Yup.mixed())
             .min(1, "At least one frame is required")
             .max(5, "Max 5 frames"),
       }),
@@ -181,38 +178,148 @@ const EditBooth = (
    ) => {
       values.event.startDate = values.event.startDate.valueOf();
       values.event.endDate = values.event.endDate.valueOf();
-
-      const form = new FormData();
-
-      Object.keys(values).forEach((top) => {
-         Object.keys(values[top]).forEach((mid) => {
-            const val = values[top][mid];
-            if (Array.isArray(val)) {
-               val.forEach((_, i) => {
-                  form.append(
-                     top + "[" + mid + "][]",
-                     val[i].filename ? JSON.stringify(val[i]) : val[i]
-                  );
-               });
-            } else {
-               form.append(top + "[" + mid + "]", val);
-            }
+      const gggi=()=>{
+         const form = new FormData();
+         debugger
+         Object.keys(values).forEach((top) => {
+            Object.keys(values[top]).forEach((mid) => {
+               const val = values[top][mid];
+               if (Array.isArray(val)) {
+                  val.forEach((_, i) => {
+                     form.append(
+                        top + "[" + mid + "][]",
+                        val[i].filename ? JSON.stringify(val[i]) : val[i]
+                     );
+                  });
+               } else {
+                  form.append(top + "[" + mid + "]", val);
+               }
+            });
+               
          });
-      });
-
-      setIsSubmitting(true);
-
-      api.post(`/booth/${booth.slug}/edit`, form, {
-         onUploadProgress: (e) => setUploadProgress(e.loaded / e.total),
-      })
-         .then(() => {
-            router.push("/dashboard/booth/all");
+         setIsSubmitting(true);
+         console.log(form)
+         api.post(`/booth/${booth.slug}/edit`, form, {
+            onUploadProgress: (e) => setUploadProgress(e.loaded / e.total),
          })
-         .catch(alert)
-         .finally(() => {
-            setIsSubmitting(false);
-         });
-   };
+            .then(() => {
+               router.push("/dashboard/booth/all");
+            })
+            .catch(alert)
+            .finally(() => {
+               setIsSubmitting(false);
+            });
+   
+       }
+
+      const imageconvertor=async(url:any,name:any)=>{
+ 
+         const toDataURL = async(url:any) => await fetch(url)
+               .then(response => response.blob())
+               .then(blob => new Promise((resolve, reject) => {
+               const reader = new FileReader()
+               reader.onloadend = () => resolve(reader.result)
+               reader.onerror = reject
+               reader.readAsDataURL(blob)
+              }))
+         
+              function dataURLtoFile(dataurl:any, filename:any) {
+              
+               var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+               bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+               while(n--){
+               u8arr[n] = bstr.charCodeAt(n);
+               }
+             return new File([u8arr], filename, {type:mime});
+            }
+      const data= await toDataURL(url) 
+     
+     return dataURLtoFile(data,name)
+     
+       }
+
+         let finalarr=[]
+          let img=[]
+           console.log(values)
+       debugger
+       Promise.all(values.images.frames?.map(async (item)=>{
+            if(item instanceof File) img.push(item)
+           else{
+            const imageobb=  await imageconvertor(`${IMAGES_URI+item.filename}`,item.filename)
+   
+           img.push(imageobb)
+           }
+        return img
+        
+       })).then((result)=>{
+        finalarr=result[0]
+         console.log("this is result",result)
+       
+      values.images.frames=finalarr
+    
+      debugger
+      console.log(values)
+
+      const hello=values.images.logo
+      debugger
+      if(hello){
+         debugger
+         const mypromise=async()=>{
+            const value=values.images.logo
+         if(value instanceof File) return value
+        else return await imageconvertor(`${IMAGES_URI+value}`,value)
+      }
+      mypromise().then((result2)=>{
+       debugger
+       console.log(result2)
+         values.images.logo=result2
+
+    const hello2=values.images.background
+if(hello2){
+            debugger
+            const mypromise2=async()=>{
+               if(hello2 instanceof File) return hello2
+           return await imageconvertor(`${IMAGES_URI+hello2}`,hello2)
+         }
+mypromise2().then((result3)=>{
+          debugger
+          console.log(result3)
+            values.images.background=result3
+            gggi()
+      
+         })
+     
+      }
+      else gggi()
+ })
+  
+   }
+   else{
+      const hello4=values.images.background
+
+      if(hello4){
+         debugger
+         const mypromise4=async()=>{
+            if(hello4 instanceof File) return hello4   
+       else return await imageconvertor(`${IMAGES_URI+hello4}`,hello4)
+      }
+      mypromise4().then((result4)=>{
+       debugger
+       console.log(result4)
+         values.images.background=result4
+         gggi()
+   
+      })
+  
+   }
+   else gggi()
+   }
+
+
+   })   
+
+}
+
 
    return (
    <>   
