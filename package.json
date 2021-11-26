@@ -21,6 +21,7 @@
     "formik": "^2.2.9",
     "fs": "0.0.1-security",
     "is-mobile": "^3.0.0",
+    "jsdom": "^18.1.1",
     "merge-images": "^2.0.0",
     "moment": "^2.29.1",
     "next": "^11.1.2",
