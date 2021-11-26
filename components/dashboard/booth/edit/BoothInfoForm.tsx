@@ -1,3 +1,4 @@
+// @ts-ignore
 import {
   ErrorMessage,
   Field,
@@ -19,18 +20,18 @@ const BoothInfoForm: React.FC<BoothInfoFormPorps> = ({}) => {
   const formik: FormikContextType<BoothFormValues> = useFormikContext();
 
   const parseDate = (date: Date, count = 0) => {
-    const r = [];
-    const newDate = futureDate(date, count);
-    const parts = newDate.toISOString().split("T");
+    const r:string[] = [];
+    const newDate:any = futureDate(date, count);
+    const parts:string[] = newDate.toISOString().split("T");
 
-    r[0] = parts[0];
+    r.push(parts[0]);
 
-    r[1] = parts[1]
+    r.push(parts[1]
       .split(":")
       .filter((_, i) => i <= 1)
-      .join(":");
+      .join(":"))
 
-    r[2] = parts[1];
+    r.push(parts[1])
 
     return r;
   };

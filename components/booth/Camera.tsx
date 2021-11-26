@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable @next/next/no-img-element */
+// @ts-ignore
 import React, { useEffect, useRef, useState } from "react";
 import { Draggable, Droppable } from "react-drag-and-drop";
 import ReactDraggable from "react-draggable";
@@ -132,7 +133,7 @@ const Camera: React.FC<CameraPorps> = ({
 
     const framesCount = isStill ? 1 : isGIF ? 5 : 24;
 
-    const images = [];
+    const images:any = [];
 
     for (let i = 0; i < framesCount; i++) {
       images.push(webcamRef.current?.getScreenshot() ?? "");
@@ -187,7 +188,7 @@ const Camera: React.FC<CameraPorps> = ({
     canvas.width = width;
     canvas.height = height;
 
-    const images = [];
+    const images:any = [];
 
     for (let i = 0; i < capturedImages.length; i++) {
       const image = new Image();
@@ -262,7 +263,7 @@ const Camera: React.FC<CameraPorps> = ({
     );
 
     setIsUploading(true);
-    const imag=[]
+    const imag:any=[]
     imag.push(img)
     const newImages = await handleMergeImages(
       imag,
