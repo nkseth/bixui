@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable @next/next/no-img-element */
-// @ts-ignore
+/* @ts-ignore*/
+// @ts-nocheck
 import React, { useEffect, useRef, useState } from "react";
 import { Draggable, Droppable } from "react-drag-and-drop";
 import ReactDraggable from "react-draggable";
