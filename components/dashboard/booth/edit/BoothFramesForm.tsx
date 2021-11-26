@@ -49,13 +49,7 @@ console.log(formik.values.images.frames)
         showDenyButton: true,
       })
       .then(() => {
-        debugger
-        const heep=[]
-        images.map((item)=>{
-          if(item?.name!==image?.name || image?.filename!==item?.filename)  heep.push(item)
-        })
-        formik.setFieldValue("images.frames",heep );
-        setImages(heep);
+        setImages((i) => i.filter((f) => f !== image));
       });
   };
 

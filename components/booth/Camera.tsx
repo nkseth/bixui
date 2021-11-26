@@ -18,8 +18,7 @@ import { getMergedImages } from "../../constants/helpers";
 import moment from "moment";
 import { FabricJSCanvas, useFabricJSEditor } from 'fabricjs-react'
 import { fabric } from 'fabric'
-import FabricToImageData from 'fabric-to-image-data'
-import ReactDOM from "react-dom"
+
 type CameraPorps = {
   selectedCameraType: "still" | "burst" | "gif";
   selectedFrameIndex: number;
@@ -242,7 +241,7 @@ const Camera: React.FC<CameraPorps> = ({
 
 
   
-  const saveImage2 = async (img) => {
+  const saveImage2 = async (img:any) => {
     const formdata = new FormData();
 
     formdata.append("isBurst", isBurst ? "true" : "false");
@@ -341,7 +340,7 @@ React.useEffect(()=>{
 
 
 
-const [imagew,setimgw]=useState()
+const [imagew,setimgw]=useState({clientWidth:0,clientHeight:0})
 
 useEffect(() => {
 
@@ -381,7 +380,7 @@ const savecanvas=()=>{
       fabric.Image.fromURL(IMAGES_URI + frames[selectedFrameIndex].filename, function(oImg) {  
 
         
-          editor?.canvas.add( oImg.set({left:0, top: -100,selectable:false,width:'200',height:"132"}));
+          editor?.canvas.add( oImg.set({left:0, top: -100,selectable:false, width:200,height:132}));
   
         
         editor?.canvas.renderAll()
@@ -389,7 +388,7 @@ const savecanvas=()=>{
     }
 
 
-    const url = editor?.canvas.toDataURL({format: 'png'})
+    const url:any = editor?.canvas.toDataURL({format: 'png'})
     fetch(url)
       .then(res => res.blob())
       .then(blob => {
@@ -405,12 +404,12 @@ const savecanvas=()=>{
 
 
 
-const addsticker=(imgurl) => {
+const addsticker=(imgurl:any) => {
   
  
     fabric.Image.fromURL(imgurl, function(oImg) { 
       // oImg._originalElement.crossOrigin="anonymous"
-      editor?.canvas.add( oImg.set({left: 0, top: 0,zIndex:'2000'}).scale(0.7));
+      editor?.canvas.add( oImg.set({left: 0, top: 0}).scale(0.7));
       
   },{ crossOrigin: 'Anonymous' })
 
@@ -427,19 +426,17 @@ const atttextcanvas=()=>{
 }
 
 const funi=()=>{
-  var img = document.createElement('img');
- 
   fabric.Object.prototype.transparentCorners = false;
   fabric.Object.prototype.cornerColor = 'blue';
   fabric.Object.prototype.cornerStyle = 'circle';
-  var img = document.getElementById('imageid');
-  setimgw(img) 
+ let img = document.getElementById('imageid');
+ img? setimgw(img):null 
 
 //or however you get a handle to the IMG
         var width = img?.clientWidth;
         var height = img?.clientHeight;
       alert(width + ' x ' + height + '')
-        editor?.canvas.setDimensions({width:width, height:height});
+        editor?.canvas.setDimensions({width:width|| 0, height:height||0});
 }
 
 const [textcolor,settextcolor]=useState("#000ff")
@@ -527,7 +524,7 @@ height:imagew?.clientHeight
             </div>
           </div>
           <div style={{display:'flex',justifyContent: 'center',flexDirection:'column'}}>
-          <div className="buttonsContainer" >
+          <div className="buttonsContainer" style={{backgroundColor:'red'}} >
             <Button
               icon={
                 "fas fa-" + (capturedImages.length ? "redo" : "chevron-left")
@@ -538,8 +535,8 @@ height:imagew?.clientHeight
               onClick={
                 capturedImages.length
                   ? () =>{ setCapturedImages([])
-                    let obi=editor?.canvas.getObjects()
-                    obi.map((item)=>{
+                    let obi:any=editor?.canvas.getObjects()
+                    obi.map((item:any)=>{
                       debugger
                       editor?.canvas.remove(item)
                     })
@@ -598,8 +595,15 @@ height:imagew?.clientHeight
            
           </div>
         
-          <div>
-              <button onClick={()=>{
+       
+            
+          </div>
+
+          <div style={{backgroundColor:'green'}}>
+              <button
+              style={{color:'white',fontSize:"15px",padding:'5px 7px'
+              ,backgroundColor:'blue',border:"none"}}
+              onClick={()=>{
                    var object = editor?.canvas.getActiveObject();
                    console.log(object)
                    if (!object){
@@ -619,8 +623,6 @@ height:imagew?.clientHeight
             <button onClick={()=>{atttextcanvas()}}>Add text</button>
             </div>:null}
            
-            
-          </div>
         </>
 
         

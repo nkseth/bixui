@@ -238,11 +238,11 @@ const EditBooth = (
      
        }
 
-         let finalarr=[]
-          let img=[]
+         let finalarr:any=[]
+          let img:any=[]
            console.log(values)
        debugger
-       Promise.all(values.images.frames?.map(async (item)=>{
+       Promise.all(values.images.frames?.map(async (item:any)=>{
             if(item instanceof File) img.push(item)
            else{
             const imageobb=  await imageconvertor(`${IMAGES_URI+item.filename}`,item.filename)

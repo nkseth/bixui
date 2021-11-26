@@ -88,6 +88,26 @@ const Gallery: React.FC<GalleryPorps> = ({}) => {
     //   });
   };
   // @todo - download Selected images
+
+  const Downloadallorsel=(arr:any)=>{
+    if(arr){
+
+    }else{
+      api
+      .post(`/download-all-images/${user?.isOwner}`,)
+      .then((res) => {
+        let link = document.createElement("a");
+        let papi=res.data.download_link
+        link.download =`https://api.bizphotobooth.com${papi}/download`
+        console.log(`https://api.bizphotobooth.com${papi}/download`)
+        document.body.appendChild(link);
+      link.click();
+      link.remove();
+        console.log(res)
+       })
+    }
+  }
+
   const handleDownloadSelected = async () => {
     const { isConfirmed } = await Swal.fire({   //@todo Swal pop up changing the gallery container size, style bug
       title: "Download Selected Images ?",
@@ -124,7 +144,7 @@ const Gallery: React.FC<GalleryPorps> = ({}) => {
             <FormWrapper title="Photos">
               <>
                 <button
-                  onClick={() => handleDownloadAll()}
+                  onClick={() => Downloadallorsel(null)}
                   className={styles.imageDownload}
                 >
                   Download All

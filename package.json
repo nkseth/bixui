@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev -p 5000",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 6500",
     "lint": "next lint"
   },
   "dependencies": {
@@ -16,7 +16,6 @@
     "axios": "^0.21.1",
     "easy-peasy": "^5.0.4",
     "fabric": "^4.6.0",
-    "fabric-to-image-data": "^0.1.5",
     "fabricjs-react": "^1.0.8",
     "formik": "^2.2.9",
     "fs": "0.0.1-security",
@@ -39,6 +38,7 @@
     "yup": "^0.32.9"
   },
   "devDependencies": {
+    "@types/fabric": "^4.5.5",
     "@types/merge-images": "^1.2.1",
     "@types/react": "^17.0.16",
     "@types/react-datepicker": "^4.1.7",
