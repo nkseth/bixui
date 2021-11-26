@@ -17,7 +17,7 @@ import { useStoreState } from "../../hooks/store";
 import { getMergedImages } from "../../constants/helpers";
 import moment from "moment";
 import { FabricJSCanvas, useFabricJSEditor } from 'fabricjs-react'
-import { fabric } from 'fabric'
+import { fabric } from 'fabric-pure-browser'
 
 type CameraPorps = {
   selectedCameraType: "still" | "burst" | "gif";
