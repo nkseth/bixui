@@ -180,7 +180,7 @@ const EditBooth = (
       values.event.endDate = values.event.endDate.valueOf();
       const gggi=()=>{
          const form = new FormData();
-         debugger
+     
          Object.keys(values).forEach((top) => {
             Object.keys(values[top]).forEach((mid) => {
                const val = values[top][mid];
@@ -241,7 +241,7 @@ const EditBooth = (
          let finalarr:any=[]
           let img:any=[]
            console.log(values)
-       debugger
+ 
        Promise.all(values.images.frames?.map(async (item:any)=>{
             if(item instanceof File) img.push(item)
            else{
@@ -257,32 +257,31 @@ const EditBooth = (
        
       values.images.frames=finalarr
     
-      debugger
       console.log(values)
 
       const hello=values.images.logo
-      debugger
+    
       if(hello){
-         debugger
+  
          const mypromise=async()=>{
             const value=values.images.logo
          if(value instanceof File) return value
         else return await imageconvertor(`${IMAGES_URI+value}`,value)
       }
       mypromise().then((result2)=>{
-       debugger
+    
        console.log(result2)
          values.images.logo=result2
 
     const hello2=values.images.background
 if(hello2){
-            debugger
+         
             const mypromise2=async()=>{
                if(hello2 instanceof File) return hello2
            return await imageconvertor(`${IMAGES_URI+hello2}`,hello2)
          }
 mypromise2().then((result3)=>{
-          debugger
+         
           console.log(result3)
             values.images.background=result3
             gggi()
@@ -298,13 +297,13 @@ mypromise2().then((result3)=>{
       const hello4=values.images.background
 
       if(hello4){
-         debugger
+        
          const mypromise4=async()=>{
             if(hello4 instanceof File) return hello4   
        else return await imageconvertor(`${IMAGES_URI+hello4}`,hello4)
       }
       mypromise4().then((result4)=>{
-       debugger
+       
        console.log(result4)
          values.images.background=result4
          gggi()

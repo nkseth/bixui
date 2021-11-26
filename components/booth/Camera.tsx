@@ -272,7 +272,7 @@ const Camera: React.FC<CameraPorps> = ({
       height,
       user?.isOwner
     );
-debugger
+
     if (isStill) {
       formdata.append("image", newImages[0]);
     } else {
@@ -539,7 +539,7 @@ height:imagew?.clientHeight
                   ? () =>{ setCapturedImages([])
                     let obi:any=editor?.canvas.getObjects()
                     obi.map((item:any)=>{
-                      debugger
+                   
                       editor?.canvas.remove(item)
                     })
                     editor?.canvas.clear()
