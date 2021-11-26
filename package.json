@@ -16,6 +16,7 @@
     "axios": "^0.21.1",
     "easy-peasy": "^5.0.4",
     "fabric": "^4.6.0",
+    "fabric-pure-browser": "^4.6.0",
     "fabricjs-react": "^1.0.8",
     "formik": "^2.2.9",
     "fs": "0.0.1-security",

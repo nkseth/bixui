@@ -523,8 +523,8 @@ height:imagew?.clientHeight
              
             </div>
           </div>
-          <div style={{display:'flex',justifyContent: 'center',flexDirection:'column'}}>
-          <div className="buttonsContainer" style={{backgroundColor:'red'}} >
+          <div style={{display:'flex',justifyContent: 'center',flexDirection:'column',alignContent:'center'}}>
+          <div className="buttonsContainer" style={{backgroundColor:'red',width:'100%',marginLeft:'-3vw'}} >
             <Button
               icon={
                 "fas fa-" + (capturedImages.length ? "redo" : "chevron-left")
@@ -595,12 +595,9 @@ height:imagew?.clientHeight
            
           </div>
         
-       
-            
-          </div>
-
           <div style={{backgroundColor:'green'}}>
               <button
+              disabled={editor?.canvas.getActiveObject()?false:true}
               style={{color:'white',fontSize:"15px",padding:'5px 7px'
               ,backgroundColor:'blue',border:"none"}}
               onClick={()=>{
@@ -623,6 +620,10 @@ height:imagew?.clientHeight
             <button onClick={()=>{atttextcanvas()}}>Add text</button>
             </div>:null}
            
+            
+          </div>
+
+       
         </>
 
         
