@@ -6,7 +6,7 @@
     "dev": "next dev -p 5000",
     "build": "next build",
     "start": "next start -p 6500 ",
-    "now-build": "cp canvas_lib64/*so.1 node_modules/canvas/build/Release/",
+   
     "lint": "next lint"
   },
   "dependencies": {
