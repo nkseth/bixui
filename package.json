@@ -6,6 +6,7 @@
     "dev": "next dev -p 5000",
     "build": "next build",
     "start": "next start -p 6500 ",
+    "vercel-build": "yum install libuuid-devel libmount-devel && cp /lib64/{libuuid,libmount,libblkid}.so.1 node_modules/canvas/build/Release/ && npm run build",
     "lint": "next lint"
   },
   "dependencies": {
