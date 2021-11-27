@@ -1,3 +1,6 @@
+/* @ts-ignore*/
+// @ts-nocheck
+
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { useRouter } from "next/router";
 import React from "react";
@@ -20,8 +23,8 @@ const Index = (
          <Gallery
             photos={images.map((image) => ({
                src: IMAGES_URI + image.filename,
-               height: 1,
-               width: parseFloat(image.aspectRatio),
+               height: "auto",
+               width: parseFloat(image.aspectRatio)*0.8,
             }))}
             margin={4}
             onClick={(e, { index }) =>

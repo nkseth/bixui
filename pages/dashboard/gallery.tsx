@@ -1,3 +1,5 @@
+/* @ts-ignore*/
+// @ts-nocheck
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Swal from "sweetalert2";
@@ -12,13 +14,13 @@ import logoFooter from "../../public/logo_footer.png";
 import { IMAGES_URI } from "../../constants/variables";
 import GalleryImage from "../../components/dashboard/GalleryImage";
 import { futureDate } from "../../constants/helpers";
-
+import Select from 'react-select'
 type GalleryPorps = {};
 
 const Gallery: React.FC<GalleryPorps> = ({}) => {
   const [booths, setBooths] = useState<Booth[]>([]);
   const user = useStoreState((s) => s.user);
-
+const [selected,setset]=useState()
   const [isLoading, setIsLoading] = useState(true);
 
   const [images, setImages] = useState<CapturedImage[]>([]);
@@ -127,7 +129,25 @@ const Gallery: React.FC<GalleryPorps> = ({}) => {
       link.remove();
     });
   };
+  const [eventlist,seteventlist]=useState([])
+const [selectlist,setselectlist]=useState([])
+  useEffect(()=>{
 
+  },[eventlist])
+useEffect(()=>{
+  const eveb:[]=[]
+images.map((item:any)=>{
+  if(!eveb.includes(item?.slug)) eveb.push(item?.slug)
+})
+seteventlist(eveb)
+const ddi=[]
+eveb.map((item:string)=>{
+ddi.push(  { value: item, label: item })
+})
+setselectlist(ddi)
+setset(ddi[0])
+
+},[images])
   return (
     <>
       {isLoading ? (
@@ -143,6 +163,8 @@ const Gallery: React.FC<GalleryPorps> = ({}) => {
           >
             <FormWrapper title="Photos">
               <>
+              <div style={{display:'flex',width:'100%',justifyContent:'space-between'}}>
+               <div>
                 <button
                   onClick={() => Downloadallorsel(null)}
                   className={styles.imageDownload}
@@ -156,16 +178,24 @@ const Gallery: React.FC<GalleryPorps> = ({}) => {
                 >
                   Download Selected
                 </button>
+                </div>
+                <div style={{maxWidth:'300px',minWidth:'250px'}}>
+                  <label style={{fontSize:'12px'}}>select event</label>
+               <Select options={selectlist} onChange={(e)=>{setset(e)}} label="Select Event" value={selected}/>
+               </div>
+               </div>
                 <div className={styles.galleryImages}>
                   {console.log(images)}
-                  {images.map((image, key) => (
-                    <GalleryImage
+                  {images.map((image, key) =>{
+                  if(image.slug===selected.value)
+                  return  <GalleryImage
                       key={key}
                       image={image}
                       selectedImages={selectedImages}
                       handleSelectedImages={handleSelectedImages}
                     />
-                  ))}
+            }     )}
+                  {console.log(user)}
                 </div>
               </>
             </FormWrapper>

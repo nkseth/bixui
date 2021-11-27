@@ -10,6 +10,10 @@ import api from "../../../../constants/api";
 import { isBoothActive } from "../../../../constants/helpers";
 import { Booth } from "../../../../constants/types";
 import { IMAGES_URI } from "../../../../constants/variables";
+import {
+  FacebookShareButton,
+  FacebookIcon,
+} from 'next-share';
 
 const Image = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>
@@ -18,7 +22,7 @@ const Image = (
   const { image } = router.query as { image: string };
   const { config } = props;
   const URL =
-    "https://bizconnectevents/booth/" +
+    "https://bizconnectevents.com/booth/" +
     props.slug +
     "/gallery/" +
     image;
@@ -39,14 +43,18 @@ const Image = (
               <ShareButton
                 icon="fas fa-download"
                 download={`[${config.title}] Image.gif`}
-                url={IMAGES_URI + image}
+                url={IMAGES_URI + image+'/download'}
+                
               />
             )}
             {config.sharing.facebook && (
+              <FacebookShareButton url={URL}>
+                {console.log()}
               <ShareButton
                 icon="fab fa-facebook-f"
-                url={"https://www.facebook.com/sharer/sharer.php?u=" + URL}
+                
               />
+              </FacebookShareButton>
             )}
             {config.sharing.twitter && (
               <ShareButton
@@ -96,8 +104,9 @@ const Image = (
 };
 
 const ShareButton: React.FC<
-  React.ComponentProps<typeof Button> & { url?: string }
+  React.ComponentProps<typeof Button> & { url?: string, }
 > = ({ url, onClick, download, ...props }) => {
+  console.log(url)
   return url ? (
     <a href={url} target="_blank" rel="noreferrer" {...{ download }}>
       <Button isRounded size={50} iconSize={16} {...props} />

@@ -29,10 +29,10 @@ const SelectFrame: React.FC<SelectFramePorps> = ({
         }
       />
 
-      <div className="framesContainer" style={{backgroundColor:"red"}}>
+      <div className="framesContainer" >
         {booth.config.images.frames.map(({ filename }, index) => (
           <img
-          style={{backgroundColor:"red"}}
+         
             key={filename}
             alt="Frame"
             src={IMAGES_URI + filename}

@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable jsx-a11y/alt-text */
 import Link from "next/link";
 import React from "react";
 import { Booth } from "../../constants/types";
@@ -22,6 +24,10 @@ const BoothWrapper: React.FC<BoothWrapperPorps> = ({ booth, children }) => {
             }),
          }}
       >
+
+         {config.images.logo?<div style={{position:'absolute',right:'20px',top:"50px"}}>
+         <img src={IMAGES_URI + config.images.logo} alt="logo" style={{maxWidth:'200px'}}/>
+         </div>:null}
          <div className={"sidebarButton " + (isSidebarOpen && "hidden")}>
             <Button
                icon="far fa-bars"

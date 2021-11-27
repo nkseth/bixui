@@ -13,6 +13,7 @@ import styles from "../../../../styles/dashboard/booth/new/BoothInfoForm.module.
 import FormWrapper from "../../FormWrapper";
 import { BoothFormValues } from "../../../../pages/dashboard/booth/new";
 import { futureDate } from "../../../../constants/helpers";
+import moment from "moment";
 
 type BoothInfoFormPorps = {};
 
@@ -82,14 +83,20 @@ const BoothInfoForm: React.FC<BoothInfoFormPorps> = ({}) => {
             <label htmlFor="">Start Date</label>
             <input
               type="date"
+              disabled={moment().diff(formik.values.event.startDate,"second")<0?false:true}
               value={parseDate(formik.values.event.startDate)[0]}
               onChange={(e) => handleDateChange(e, true, false)}
             />
           </div>
           <div className={`${styles.inputContainer} ${styles.smaller}`}>
             <label htmlFor="">Start Time</label>
+           { console.log(moment().diff(formik.values.event.startDate,"second"))}
+           { console.log(formik.values.event.startDate)}
+           
             <input
               type="time"
+              
+              disabled={moment().diff(formik.values.event.startDate,"second")<0?false:true}
               value={parseDate(formik.values.event.startDate)[1]}
               onChange={(e) => handleDateChange(e, true, true)}
             />
@@ -101,6 +108,7 @@ const BoothInfoForm: React.FC<BoothInfoFormPorps> = ({}) => {
                type="date"
                min={parseDate(formik.values.event.startDate)[0]}
                value={parseDate(formik.values.event.endDate)[0]}
+               disabled={moment().diff(formik.values.event.startDate,"second")<0?false:user.isOwner?false:true}
                onChange={(e) => handleDateChange(e, false, false)}
              />
             ) : 
@@ -117,6 +125,7 @@ const BoothInfoForm: React.FC<BoothInfoFormPorps> = ({}) => {
             <label htmlFor="">End Time</label>
             <input
               type="time"
+              disabled={moment().diff(formik.values.event.startDate,"second")<0?false:user?.isOwner?false:true}
               value={parseDate(formik.values.event.endDate)[1]}
               onChange={(e) => handleDateChange(e, false, true)}
             />

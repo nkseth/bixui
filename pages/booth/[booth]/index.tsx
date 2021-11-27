@@ -22,6 +22,18 @@ export default function BoothIndex(
       "still" | "burst" | "gif"
    >("still");
 
+   const [title,settitle]=useState(props.config.phrases[currentStepIndex][0])
+   const [subtitle,setsubtitle]=useState(props.config.phrases[currentStepIndex][1])
+   const textchange=()=>{
+         settitle("Decorate Your Photo")
+         setsubtitle("Add Text and stickers")
+   }
+
+   const textchangeback=()=>{
+      settitle(props.config.phrases[currentStepIndex][0])
+      setsubtitle(props.config.phrases[currentStepIndex][1])
+}
+
    const _steps = [
       <SelectCameraType
          key={0}
@@ -33,7 +45,8 @@ export default function BoothIndex(
       />,
       <Camera
          key={2}
-         {...{ selectedCameraType, selectedFrameIndex, setCurrentStepIndex }}
+        
+         {...{ selectedCameraType, selectedFrameIndex, setCurrentStepIndex,textchange,textchangeback }}
       />,
    ];
 
@@ -41,10 +54,10 @@ export default function BoothIndex(
       <BoothContext.Provider value={props}>
          <BoothWrapper booth={props}>
             <h3 className="title">
-               {props.config.phrases[currentStepIndex][0]}
+               {title}
             </h3>
             <h5 className="subTitle">
-               {props.config.phrases[currentStepIndex][1]}
+              {subtitle}
             </h5>
             {_steps[currentStepIndex] ?? null}
          </BoothWrapper>

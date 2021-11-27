@@ -20,6 +20,7 @@ import { getMergedImages } from "../../constants/helpers";
 import moment from "moment";
 import { FabricJSCanvas, useFabricJSEditor } from 'fabricjs-react'
 import { fabric } from 'fabric-pure-browser'
+import ReactTooltip from 'react-tooltip';
 
 type CameraPorps = {
   selectedCameraType: "still" | "burst" | "gif";
@@ -31,6 +32,8 @@ const Camera: React.FC<CameraPorps> = ({
   selectedCameraType,
   selectedFrameIndex,
   setCurrentStepIndex,
+  textchange,
+  textchangeback
 }) => {
   const sticker = [
     "/sticker1.png",
@@ -65,9 +68,7 @@ const Camera: React.FC<CameraPorps> = ({
 
 
 
- 
-
-  const isBurst = selectedCameraType === "burst";
+const isBurst = selectedCameraType === "burst";
   const isStill = selectedCameraType === "still";
   const isGIF = selectedCameraType === "gif";
 
@@ -266,7 +267,7 @@ const Camera: React.FC<CameraPorps> = ({
     setIsUploading(true);
     const imag:any=[]
     imag.push(img)
-    const newImages = await handleMergeImages(
+    const newImages = await handleMergeImages2(
       imag,
       width,
       height,
@@ -308,7 +309,7 @@ React.useEffect(()=>{
   ) => {
 
     const watermarkWidth = 200;
-    const watermarkHeight = 132;
+    const watermarkHeight =132;
     console.log(moment(booth.starts_at).diff(moment(),'seconds')<0)
     if ( isowner?moment(booth.starts_at).diff(moment(),'seconds')<0:true ) {
       const constructImages = images.map((image) => [
@@ -328,7 +329,29 @@ React.useEffect(()=>{
     }
     return images;
   };
+  const handleMergeImages2 = async (
+    images: string[],
+    width: number,
+    height: number,
+    isowner?: boolean
+  ) => {
 
+    const watermarkWidth = 100;
+    const watermarkHeight = 60;
+    console.log(moment(booth.starts_at).diff(moment(),'seconds')<0)
+    if ( isowner?moment(booth.starts_at).diff(moment(),'seconds')<0:true ) {
+      const constructImages = images.map((image) => [
+        ...[
+          { src: image, x: 0, y: 0 },
+        ],
+        ...stickers,
+      ]);
+      const mergedImages = await getMergedImages(constructImages);
+      console.log({ constructImages, stickers, mergedImages });
+      return mergedImages;
+    }
+    return images;
+  };
   interface Sticker {
     src: string;
     x: boolean;
@@ -340,6 +363,12 @@ React.useEffect(()=>{
     box.classList.toggle("showbox");
   };
 
+  const stickerBoxr = () => {
+    let box = document.querySelector("#stickerbox")!;
+    box.classList.remove("showbox");
+  };
+
+
 
 
 const [imagew,setimgw]=useState({clientWidth:0,clientHeight:0})
@@ -348,46 +377,36 @@ useEffect(() => {
 
 
   fabric.Image.fromURL(capturedImages[capturedImagePreviewIndex()], function(oImg) { 
-     console.log("wogoo",oImg)
-    editor?.canvas.add( oImg.set({selectable:false,crossOrigin:"anonymous"}) );
-   editor?.canvas.renderAll()
+    
+     oImg.scaleToHeight(imagew.clientHeight);
+    oImg.scaleToWidth(imagew.clientWidth);
+    editor?.canvas.add( oImg.set({selectable:false,crossOrigin:"anonymous"}) ).renderAll()
+   editor?.canvas.sendToBack(oImg)
   
   
   },{ crossOrigin: 'Anonymous' })
-
-
-   fabric.Image.fromURL(IMAGES_URI + frames[selectedFrameIndex].filename, function(oImg) {  
-
-      if(imagew?.clientWidth<250){
-        editor?.canvas.add( oImg.set({left: 0, top: 0,selectable:false,crossOrigin:"anonymous"}).scale(0.25));
-      }
-      else{
-        editor?.canvas.add( oImg.set({left: 0, top: 0,selectable:false,crossOrigin:"anonymous"}).scale(0.37));  
-      }
-      
-      editor?.canvas.renderAll()
-  },{ crossOrigin: 'Anonymous' })
   
+fabric.Image.fromURL(IMAGES_URI + frames[selectedFrameIndex].filename, function(oImg) {  
+    oImg.scaleToHeight(imagew.clientHeight);
+    oImg.scaleToWidth(imagew.clientWidth);
+    editor?.canvas.add( oImg.set({left: 0, top: 0,selectable:false
+    })).renderAll()
+  },{ crossOrigin: 'Anonymous' })
+  //user.isowner?moment(booth.starts_at).diff(moment(),'seconds')<0:true
+  if ( user.isowner?moment(booth.starts_at).diff(moment(),'seconds')<0:true ) {
+  fabric.Image.fromURL("/logo_watermark.png", function(oImg) {  
+
+        
+    editor?.canvas.add( oImg.set({left:10, top:260,selectable:false}).scale(0.5)).renderAll()
+
+},{ crossOrigin: 'Anonymous' })
+}
 
 },[ capturedImages])
 
 const savecanvas=()=>{
 
-  console.log("this is blob",editor?.canvas)
-   // console.log(blob);
      console.log(editor?.canvas.toDataURL({format: 'png'}))
-    // console.log(URL.createObjectURL(blob))
-    if ( true )
-    {
-      fabric.Image.fromURL(IMAGES_URI + frames[selectedFrameIndex].filename, function(oImg) {  
-
-        
-          editor?.canvas.add( oImg.set({left:0, top: -100,selectable:false, width:200,height:132}));
-  
-        
-        editor?.canvas.renderAll()
-    },{ crossOrigin: 'Anonymous' })
-    }
 
 
     const url:any = editor?.canvas.toDataURL({format: 'png'})
@@ -425,6 +444,9 @@ const atttextcanvas=()=>{
     fill:textcolor
     
 }));
+setaddtext(false)
+settextvalue("")
+settextcolor("#000ff")
 }
 
 const funi=()=>{
@@ -437,7 +459,6 @@ const funi=()=>{
 //or however you get a handle to the IMG
         var width = img?.clientWidth;
         var height = img?.clientHeight;
-      alert(width + ' x ' + height + '')
         editor?.canvas.setDimensions({width:width|| 0, height:height||0});
 }
 
@@ -447,8 +468,10 @@ const [textvalue,settextvalue]=useState("")
     <div
       className="cameraContainer"
       ref={cameraContainerRef}
-      style={{ width: frameImageWidth }}
+      style={{ width: "100vw",display:'flex'
+      ,justifyContent:"center",alignItems:'center',flexDirection:'column' }}
     >
+      <ReactTooltip />
       {(!cameraIsLoaded || isUploading) && !uploadProgress && (
         <div className="spinnerContainer">
           <Spinner />
@@ -462,11 +485,15 @@ const [textvalue,settextvalue]=useState("")
         )
       ) : (
         <>
-          <div className="videoPreviewContainer">
+          <div className="videoPreviewContainer" style={{marginTop:'40px'
+
+          }}>
             <div
               style={{
-                ...(uploadProgress && {
+                ...(uploadProgress ? {
                   display: "none",
+                }:{
+                  display:"flex",justifyContent:'center',flexDirection:'row',alignItems:'center'
                 }),
                
               }}
@@ -488,18 +515,16 @@ const [textvalue,settextvalue]=useState("")
                   //onUserMedia={handleMediaStream}
               />
 
-<div 
+{isStill?<div 
 
  style={{ ...((!cameraIsLoaded || capturedImages.length) && { zIndex: 1000 }),width:imagew?.clientWidth,
 height:imagew?.clientHeight
 }}
- 
  >
   <FabricJSCanvas className="sample-canvas" onReady={onReady} />
-</div>
-              
-              
-                             {capturedImages.length ? (
+</div>:null}
+        {isStill?      
+      capturedImages.length  ? (
              
                <img
                   src={capturedImages[capturedImagePreviewIndex()]}
@@ -507,17 +532,36 @@ height:imagew?.clientHeight
                   className="videoPreview"
                 style={{ ...((!cameraIsLoaded || capturedImages.length) && { zIndex: -1000 }) }}
                 /> 
-             ) : null}
-             <img id="imageid"
+             ) : null:
+              capturedImages.length ? (
+              <img
+                src={capturedImages[capturedImagePreviewIndex()]}
+                alt="Frame"
+                className="videoPreview"
+              />
+            ) : null}
+
+            {isStill? <img id="imageid"
                   style={{ ...((!cameraIsLoaded || capturedImages.length) && { zIndex: -1000 }) }}
                   src={IMAGES_URI + frames[selectedFrameIndex].filename}
                   alt="Frame"
                   className="videoPreview frame"
                   ref={frameImage}
-                /> 
+                />: <img
+                style={{ ...(!cameraIsLoaded && { display: "none" }) }}
+                src={IMAGES_URI + frames[selectedFrameIndex].filename}
+                alt="Frame"
+                className="videoPreview frame"
+                ref={frameImage}
+              />
+                
+                }
+
+
+
                 <div className="sticker_container" id="sticker_container">
+                 
                   {stickers.map((item, index) => 
-                    
                       <img src={item.src} alt={item.src} ref={stickersRef?.current?.[index]} />
                    
                   )}
@@ -525,19 +569,24 @@ height:imagew?.clientHeight
              
             </div>
           </div>
-          <div style={{display:'flex',justifyContent: 'center',flexDirection:'column',alignContent:'center'}}>
-          <div className="buttonsContainer" style={{backgroundColor:'red',width:'100%',marginLeft:'-3vw'}} >
+          <div style={{display:'flex',justifyContent: 'center',flexDirection:'column',alignItems:'center',width:'100vw'}}>
+          <div className="buttonsContainer" style={{width:'100vw'}} >
             <Button
               icon={
                 "fas fa-" + (capturedImages.length ? "redo" : "chevron-left")
               }
+              data-tip={capturedImages.length ? "Retake" : "Go back"}
               isRounded
               size={50}
               iconSize={18}
               onClick={
                 capturedImages.length
                   ? () =>{ setCapturedImages([])
+                    isStill?textchangeback():null
                     let obi:any=editor?.canvas.getObjects()
+
+                    stickerBoxr()
+                    setaddtext(false)
                     obi.map((item:any)=>{
                    
                       editor?.canvas.remove(item)
@@ -549,32 +598,43 @@ height:imagew?.clientHeight
               }
               title={capturedImages.length ? "Retake" : "Go back"}
             />
-            <Button iconSize={18}  onClick={()=>{setaddtext(true)}} icon="fas fa-font" isRounded 
+           {capturedImages.length>0 && isStill?
+           <>
+            <ReactTooltip />
+           <Button iconSize={18} 
+           
+            data-tip="Add text"
+           onClick={()=>{setaddtext(!addtext)}} icon="fas fa-font" isRounded 
              disabled={
               !capturedImages.length
             }
             />
+            </>
+            :null}
             <Button
               icon={`fas fa-${isCapturing ? "spinner fa-pulse" : "camera-alt"}`}
               isRounded
+              data-tip="Take A Snap"
               size={70}
               iconSize={28}
-              onClick={()=>{handleCapture();funi()}}
+              onClick={()=>{handleCapture();funi();isStill?textchange():null}}
               disabled={
                 !!capturedImages.length || isCapturing || !cameraIsLoaded
               }
               title={capturedImages ? "Snap" : undefined}
             />
-            <Button
+          {capturedImages.length>0 && isStill?  <Button
               iconSize={18}
               isRounded
+              data-tip="Add Sticker"
               icon="far fa-laugh-beam"
               onClick={() => stickerBox()}
               disabled={
                 !capturedImages.length
               }
-            />
+            />:null}
             <Button
+             data-tip={capturedImages.length ? "Go next" : "Flip camera"}
               icon={
                 "fas fa-" +
                 (capturedImages.length ? "chevron-right" : "repeat-alt")
@@ -583,25 +643,27 @@ height:imagew?.clientHeight
               size={50}
               iconSize={18}
               title={capturedImages.length ? "Go next" : "Flip camera"}
-              onClick={capturedImages.length ? savecanvas : undefined}
+              onClick={capturedImages.length ? isStill?savecanvas:saveImage : undefined}
             />
             <div className="sticker" id="stickerbox">
               {sticker.map((item, index) => (
-           
-                  <img  key={index} onClick={()=>addsticker(item)}src={item} alt={item} />
-              
+                <div>
+                  <img  key={index} onClick={()=>{addsticker(item),stickerBox()}}
+                  className="imgggi"
+                  src={item} alt={item} />
+              </div>
               ))}
             </div>
          
 
            
           </div>
-        
-          <div style={{backgroundColor:'green'}}>
+          <div style={{marginTop:'10px',minHeight:'40px'}}>
+        {editor?.canvas.getActiveObject()?
+         
               <button
-              disabled={editor?.canvas.getActiveObject()?false:true}
-              style={{color:'white',fontSize:"15px",padding:'5px 7px'
-              ,backgroundColor:'blue',border:"none"}}
+              style={{color:'white',fontSize:"15px",padding:'8px 10px'
+              ,backgroundColor:'#0f5ad9',border:"none",borderRadius:'20px'}}
               onClick={()=>{
                    var object = editor?.canvas.getActiveObject();
                    console.log(object)
@@ -611,16 +673,25 @@ height:imagew?.clientHeight
                    }
                    editor?.canvas.remove(object);
 
-              }}>Remove selected image Image</button>
-            </div>
-            
-            {addtext?<div style={{display:'flex'}}>
+              }}>Remove Image</button>
+            :null
+}</div>
+            {addtext?
+            <div style={{display:'flex',justifyContent:'center',alignItems:'center',flexDirection:'column'
+            ,position:'absolute',bottom:"7%"
+            }}>
               <input onChange={(e)=>{settextvalue(e.target.value)}} value={textvalue}>
             </input>
+            <div>
             <label >Color Picker:</label>
             <input type="color" id="colorpicker" value={textcolor} onChange={(e)=>{settextcolor(e.target.value)}}/>
-            <button onClick={()=>{atttextcanvas()}}>Add text</button>
-            </div>:null}
+            <button onClick={()=>{atttextcanvas()}}
+             style={{color:'white',fontSize:"15px",padding:'8px 15px'
+             ,backgroundColor:'#0f5ad9',border:"none",borderRadius:'20px',minWidth:'70px'}}
+            >Add text</button>
+          </div>
+            </div>:
+            null}
            
             
           </div>
