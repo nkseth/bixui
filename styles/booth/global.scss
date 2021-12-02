@@ -284,18 +284,19 @@
         z-index: 20;
         left: 50%;
         transform: translate(-50%, 0);
+        max-width: 100%;
       }
     }
   }
 
   .galleryPreviewContainer {
     .previewImage {
-      max-width: px;
+    
      
-      height: 480px;
+     
       
       display: block;
-      margin: 0 auto;
+      margin: 10px auto;
     }
     // .buttonsContainer {
     //   margin-top: 0;

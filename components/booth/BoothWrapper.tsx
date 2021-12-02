@@ -25,8 +25,8 @@ const BoothWrapper: React.FC<BoothWrapperPorps> = ({ booth, children }) => {
          }}
       >
 
-         {config.images.logo?<div style={{position:'absolute',right:'20px',top:"50px"}}>
-         <img src={IMAGES_URI + config.images.logo} alt="logo" style={{maxWidth:'200px'}}/>
+         {config.images.logo?<div style={{position:'absolute',right:'20px',top:"30px"}}>
+         <img src={IMAGES_URI + config.images.logo} alt="logo" style={{maxWidth:'200px',width:'7vw'}}/>
          </div>:null}
          <div className={"sidebarButton " + (isSidebarOpen && "hidden")}>
             <Button

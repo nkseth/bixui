@@ -389,19 +389,23 @@ useEffect(() => {
 fabric.Image.fromURL(IMAGES_URI + frames[selectedFrameIndex].filename, function(oImg) {  
     oImg.scaleToHeight(imagew.clientHeight);
     oImg.scaleToWidth(imagew.clientWidth);
-    editor?.canvas.add( oImg.set({left: 0, top: 0,selectable:false
+    editor?.canvas.add( oImg.set({left: 0, top: 0
     })).renderAll()
+
+    
   },{ crossOrigin: 'Anonymous' })
   //user.isowner?moment(booth.starts_at).diff(moment(),'seconds')<0:true
+
   if ( user.isowner?moment(booth.starts_at).diff(moment(),'seconds')<0:true ) {
   fabric.Image.fromURL("/logo_watermark.png", function(oImg) {  
-
+ editor?.canvas.bringToFront(oImg)
         
-    editor?.canvas.add( oImg.set({left:10, top:260,selectable:false}).scale(0.5)).renderAll()
+    editor?.canvas.add( oImg.set({left:10, top:imagew.clientHeight-70}).scale(0.5)).renderAll()
 
 },{ crossOrigin: 'Anonymous' })
 }
 
+// eslint-disable-next-line react-hooks/exhaustive-deps
 },[ capturedImages])
 
 const savecanvas=()=>{
@@ -502,7 +506,10 @@ const [textvalue,settextvalue]=useState("")
                 style={{
                   ...((!cameraIsLoaded || capturedImages.length) && {
                     display: "none",
+
                   }),
+                  
+                 
                 }}
                 audio={false}
                 className="videoPreview"
@@ -547,7 +554,7 @@ height:imagew?.clientHeight
                   alt="Frame"
                   className="videoPreview frame"
                   ref={frameImage}
-                />: <img
+                />: <img id="imageid"
                 style={{ ...(!cameraIsLoaded && { display: "none" }) }}
                 src={IMAGES_URI + frames[selectedFrameIndex].filename}
                 alt="Frame"
@@ -594,7 +601,14 @@ height:imagew?.clientHeight
                     editor?.canvas.clear()
                   }
                   : () => {setCurrentStepIndex((s) => s - 1);
-                    }
+                   
+                    let obi:any=editor?.canvas.getObjects()
+                    obi.map((item:any)=>{
+                   
+                      editor?.canvas.remove(item)
+                    })
+                    editor?.canvas.clear()
+                  }
               }
               title={capturedImages.length ? "Retake" : "Go back"}
             />

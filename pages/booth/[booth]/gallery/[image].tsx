@@ -83,7 +83,7 @@ const Image = (
               />
             )}
           </div>
-          <img src={IMAGES_URI + image} alt={image} className="previewImage" />
+          <img src={IMAGES_URI + image} alt={image} className="previewImage"  style={{maxWidth:'100%'}}/>
         </div>
         <div className="buttonsContainer">
           <Button
